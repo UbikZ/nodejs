@@ -14,7 +14,7 @@ require('./utils/confLoader')(loader, 'config', app);
 loader('model').then('model/dao').then('controller').then('routes').into(app);
 
 // Run & listen on port
-app.listen(app.get('port'), function () {
+app.listen(process.env.PORT, function () {
     console.log('%s running in %s mode on port %s', app.get('title'), app.get('env'), app.get('port'));
     console.log('Views render are using <%s> in %s', app.get('view engine'), app.get('views'))
 });
