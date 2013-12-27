@@ -4,7 +4,7 @@ path = require('path');
 stylus = require('stylus');
 loader = require('express-load');
 
-// Web engine instance
+// Web engine instance for test
 app = express();
 
 // Load environment conf
