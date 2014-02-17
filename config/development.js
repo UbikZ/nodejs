@@ -1,6 +1,14 @@
 module.exports = {
+    modules: {
+        'http': 'http',
+        'path': 'path',
+        'socket': 'socket.io',
+        'auth': 'passport',
+        'mysql': 'node-mysql',
+        'ejs': 'ejs'
+    },
     engine:{
-        'html':require('ejs').renderFile
+        'html':app.get('ejs').renderFile
     },
     set:{
         'title':'development',
@@ -17,7 +25,11 @@ module.exports = {
         express.cookieParser(),
         express.bodyParser(),
         express.session({secret: 'session_namespace_dev'}),
-        stylus.middleware(path.join(__dirname, 'public')),
-        express.static(path.join(__dirname, 'public'))
-    ]
+        express.static(path.join(__dirname, '../public'))
+    ],
+    database: {
+        host: 'localhost:8080',
+        user: 'root',
+        password: ''
+    }
 };
