@@ -2,10 +2,71 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='../public/stylesheets/style.css' />
+    <link rel='stylesheet' href='stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <h1>Online chat</h1>
+    <h2><span id="count"></span> people connected!</h2>
+
+    <p class="pseudo">
+        <label for="pseudo">Your pseudo :</label>
+        <input id="pseudo" type="text"/>
+        <input id="submit" type="button" value="Send"/>
+    </p>
+    <div>
+        <p id="chat" style="width: 300px;height: 300px;"></p>
+        <label for="prompt">Enter your message :</label>
+        <input id="prompt" type="text"/>
+        <input id="send" type="button" value="Send"/>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect(),
+            pseudo = null;
+
+        socket.on('init', function(data) {
+            $('#count').text(data.number);
+            console.info(data.messages);
+            $.each(data.messages, function(index, obj) {
+                insertMessage(obj.pseudo, obj.message);
+            });
+        });
+
+        socket.on('count_user', function(data) {
+            $('#count').text(data.number);
+        });
+
+        socket.on('new_user', function(pseudo) {
+            insertInfo('User ' + pseudo + ' is now connected', 0);
+        });
+
+        socket.on('display_msg', function(data) {
+            insertMessage(data.pseudo, data.message);
+        });
+
+        // Actions
+        $('#submit').click(function () {
+            pseudo = $('#pseudo').val();
+            socket.emit('pseudo', pseudo);
+            $('.pseudo').html('<strong>Hi ' + pseudo + '</strong>');
+        });
+
+        $('#send').click(function() {
+            var $message = $('#prompt');
+            socket.emit('add_msg', $message.val());
+            insertMessage(pseudo, $message.val());
+            $message.val('').focus();
+        });
+
+        insertMessage = function(user, msg) {
+            $('#chat').append("<strong>" + user + "</strong> : " + msg + "<br/>");
+        };
+
+        insertInfo = function(message, severity) {
+            $('#chat').append("<strong>" + message + "</strong><br/>");
+        };
+    </script>
   </body>
 </html>
